@@ -2,3 +2,5 @@ __pycache__/
 logs/
 weights/
 .DS_Store
+venv
+.idea
