@@ -49,7 +49,7 @@ class Pavements(Dataset):
 
         return len(self.list_img)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> :
 
         img_name = self.list_img[idx]
         img_raw_dir = os.path.join(self.raw_dir, img_name)
