@@ -35,8 +35,8 @@ class TiffDataset(Dataset):
         self.labels_dirs = label_dir
         self.transform = transform
         self.label_classes = label_classes
-        self.list_img = get_paths_from_csv(self.image_dirs)[:100]
-        self.list_label = get_paths_from_csv(self.labels_dirs)[:100]
+        self.list_img = get_paths_from_csv(self.image_dirs)[:500]
+        self.list_label = get_paths_from_csv(self.labels_dirs)[:500]
 
     def __len__(self):
         return len(self.list_img)

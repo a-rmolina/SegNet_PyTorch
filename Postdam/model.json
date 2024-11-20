@@ -1,12 +1,12 @@
 {
-	"batch_size": 4,
+	"batch_size": 2,
 	"epochs": 10,
 	"learning_rate": 0.005,
 	"sgd_momentum": 0.9,
 	"bn_momentum": 0.5,
-	"cross_entropy_loss_weights": [1.0, 15.0],
+	"cross_entropy_loss_weights": [0.25, 3.55, 1.32, 0.21, 0.27, 0.40],
 	"no_cuda": false,
 	"seed": 42,
 	"in_chn": 3,
-	"out_chn": 2
+	"out_chn": 6
 }

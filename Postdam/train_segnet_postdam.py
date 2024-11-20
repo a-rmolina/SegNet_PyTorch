@@ -6,6 +6,7 @@ import os
 import numpy as np
 import json
 
+from collections import OrderedDict
 from pathlib import Path
 from typing import Union
 from datetime import datetime
@@ -18,7 +19,7 @@ from tiff_dataset import TiffDataset
 
 def load_json(json_path: Union[str, Path]) -> list:
     with open(json_path, 'r') as f:
-        class_dict = json.load(f)
+        class_dict = OrderedDict(json.load(f))
         return list(class_dict.values())
 
 
@@ -26,8 +27,8 @@ def parse_arguments() -> Namespace:
     parser = ArgumentParser()
 
     #FORMAT DIRECTORIES
-    parser.add_argument("-i", "--input_raw_dir", type=str, help="Directory: Input raw images")
-    parser.add_argument("-l", "--input_label_dir", type=str, help="Directory: Labels for input raw images")
+    parser.add_argument("-i", "--input_raw_dir", type=str, help="Path to the list of raw images")
+    parser.add_argument("-l", "--input_label_dir", type=str, help="Path to the list of labels")
     parser.add_argument("-lc", "--labels_class", type=str, help="Path to labels class")
     parser.add_argument("-w", "--weight-fn", type=str, help="Path: Trained weights", default=None)
     parser.add_argument("--tb_logs_dir", type=str, help="Directory: Logs for tensorboard")
@@ -70,11 +71,11 @@ def main(args):
     transform = transforms.Compose([transforms.ToTensor()])
     train_set = TiffDataset(Path(args.input_raw_dir), Path(args.input_label_dir), transform, class_labels)
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=model_json['batch_size'], shuffle=True,
-                                               num_workers=2)
+                                               num_workers=4)
 
     model = SegNet(in_chn=model_json['in_chn'], out_chn=model_json['out_chn'], BN_momentum=model_json['bn_momentum'])
     optimizer = optim.SGD(model.parameters(), lr=model_json['learning_rate'], momentum=model_json['sgd_momentum'])
-    loss_fn = nn.CrossEntropyLoss(weight=torch.tensor(model_json['cross_entropy_loss_weights']))
+    loss_fn = nn.CrossEntropyLoss(weight=torch.tensor(model_json["cross_entropy_loss_weights"]))
 
     if cuda_available:
         model.cuda()
@@ -104,9 +105,11 @@ def main(args):
 
         for j, data in enumerate(train_loader, 1):
             images, labels = data
+            labels = labels.argmax(dim=1)
             if cuda_available:
                 images = images.cuda()
                 labels = labels.cuda()
+
             optimizer.zero_grad()
             output = model(images)
             loss = loss_fn(output, labels)
