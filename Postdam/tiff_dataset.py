@@ -20,6 +20,8 @@ def get_paths_from_csv(file_path):
         reader = csv.reader(file)
         next(reader)  # Skip the header row
         paths = [Path(row[0]) for row in reader]
+    paths = [Path(str(path).replace("/home/armolina/Qsync/images", "/media/admaro/Elements"))
+             for path in paths if not path.exists()]
     return paths
 
 
@@ -35,8 +37,8 @@ class TiffDataset(Dataset):
         self.labels_dirs = label_dir
         self.transform = transform
         self.label_classes = label_classes
-        self.list_img = get_paths_from_csv(self.image_dirs)[:500]
-        self.list_label = get_paths_from_csv(self.labels_dirs)[:500]
+        self.list_img = get_paths_from_csv(self.image_dirs)
+        self.list_label = get_paths_from_csv(self.labels_dirs)
 
     def __len__(self):
         return len(self.list_img)

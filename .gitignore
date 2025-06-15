@@ -3,5 +3,6 @@ logs/
 weights/
 .DS_Store
 venv
+.venv
 .idea
 tensorflow_logs

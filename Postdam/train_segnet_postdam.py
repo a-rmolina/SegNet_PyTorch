@@ -75,8 +75,9 @@ def main(args):
 
     model = SegNet(in_chn=model_json['in_chn'], out_chn=model_json['out_chn'], BN_momentum=model_json['bn_momentum'])
     optimizer = optim.SGD(model.parameters(), lr=model_json['learning_rate'], momentum=model_json['sgd_momentum'])
+    # [0.25, 3.55, 1.32, 0.21, 0.27, 0.40],
     loss_fn = nn.CrossEntropyLoss(weight=torch.tensor(model_json["cross_entropy_loss_weights"]))
-
+    # loss_fn = nn.CrossEntropyLoss()
     if cuda_available:
         model.cuda()
         loss_fn.cuda()
@@ -119,9 +120,9 @@ def main(args):
             writer.add_scalar('Loss', loss.item() / train_loader.batch_size, j)
             sum_loss += loss.item()
 
-            print(f'Loss at {j} mini-batch: {loss.item() / train_loader.batch_size}')
+            #print(f'Loss at {j} mini-batch: {loss.item() / train_loader.batch_size}')
 
-            print(f'Average loss @ epoch: {(sum_loss / (j * train_loader.batch_size))}')
+        print(f'Average loss @ epoch: {(sum_loss / (j * train_loader.batch_size))}')
 
     print("Training complete. Saving checkpoint...")
     save_checkpoint({'epoch': run_epoch, 'state_dict': model.state_dict(), 'optimizer': optimizer.state_dict()},
